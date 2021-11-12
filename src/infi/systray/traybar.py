@@ -29,6 +29,7 @@ class SysTrayIcon(object):
                  icon,
                  hover_text,
                  menu_options=None,
+                 include_quit_option=True,
                  on_quit=None,
                  default_menu_index=None,
                  window_class_name=None):
@@ -39,7 +40,8 @@ class SysTrayIcon(object):
         self._on_quit = on_quit
 
         menu_options = menu_options or ()
-        menu_options = menu_options + (('Quit', None, SysTrayIcon.QUIT),)
+        if include_quit_option:
+            menu_options = menu_options + (('Quit', None, SysTrayIcon.QUIT),)
         self._next_action_id = SysTrayIcon.FIRST_ID
         self._menu_actions_by_id = set()
         self._menu_options = self._add_ids_to_menu_options(list(menu_options))
