@@ -134,6 +134,7 @@ class SysTrayIcon(object):
     def _add_ids_to_menu_options(self, menu_options):
         result = []
         for menu_option in menu_options:
+            if isinstance(menu_option, tuple):
             option_text, option_icon, option_action = menu_option
             if callable(option_action) or option_action in SysTrayIcon.SPECIAL_ACTIONS:
                 self._menu_actions_by_id.add((self._next_action_id, option_action))
@@ -145,6 +146,8 @@ class SysTrayIcon(object):
                                self._next_action_id))
             else:
                 raise Exception('Unknown item', option_text, option_icon, option_action)
+            else:
+                result.append(menu_option)
             self._next_action_id += 1
         return result
 
