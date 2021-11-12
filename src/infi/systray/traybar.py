@@ -233,22 +233,25 @@ class SysTrayIcon(object):
         PostMessage(self._hwnd, WM_NULL, 0, 0)
 
     def _create_menu(self, menu, menu_options):
-        for option_text, option_icon, option_action, option_id in menu_options[::-1]:
-            if option_icon:
-                option_icon = self._prep_menu_icon(option_icon)
+        for option in menu_options[::-1]:
+            if isinstance(option, tuple):
+                option_text, option_icon, option_action, option_id = option
 
-            if option_id in self._menu_actions_by_id:
-                item = PackMENUITEMINFO(text=option_text,
-                                        hbmpItem=option_icon,
-                                        wID=option_id)
-                InsertMenuItem(menu, 0, 1, ctypes.byref(item))
-            else:
-                submenu = CreatePopupMenu()
-                self._create_menu(submenu, option_action)
-                item = PackMENUITEMINFO(text=option_text,
-                                        hbmpItem=option_icon,
-                                        hSubMenu=submenu)
-                InsertMenuItem(menu, 0, 1,  ctypes.byref(item))
+                if option_icon:
+                    option_icon = self._prep_menu_icon(option_icon)
+
+                if option_id in self._menu_actions_by_id:
+                    item = PackMENUITEMINFO(text=option_text,
+                                            hbmpItem=option_icon,
+                                            wID=option_id)
+                    InsertMenuItem(menu, 0, 1, ctypes.byref(item))
+                else:
+                    submenu = CreatePopupMenu()
+                    self._create_menu(submenu, option_action)
+                    item = PackMENUITEMINFO(text=option_text,
+                                            hbmpItem=option_icon,
+                                            hSubMenu=submenu)
+                    InsertMenuItem(menu, 0, 1,  ctypes.byref(item))
 
     def _prep_menu_icon(self, icon):
         icon = encode_for_locale(icon)
