@@ -19,6 +19,7 @@ class SysTrayIcon(object):
                 do_something(item)
 
     """
+    SEPARATOR = "separator"
     QUIT = 'QUIT'
     SPECIAL_ACTIONS = [QUIT]
 
@@ -135,17 +136,17 @@ class SysTrayIcon(object):
         result = []
         for menu_option in menu_options:
             if isinstance(menu_option, tuple):
-            option_text, option_icon, option_action = menu_option
-            if callable(option_action) or option_action in SysTrayIcon.SPECIAL_ACTIONS:
-                self._menu_actions_by_id.add((self._next_action_id, option_action))
-                result.append(menu_option + (self._next_action_id,))
-            elif non_string_iterable(option_action):
-                result.append((option_text,
-                               option_icon,
-                               self._add_ids_to_menu_options(option_action),
-                               self._next_action_id))
-            else:
-                raise Exception('Unknown item', option_text, option_icon, option_action)
+                option_text, option_icon, option_action = menu_option
+                if callable(option_action) or option_action in SysTrayIcon.SPECIAL_ACTIONS:
+                    self._menu_actions_by_id.add((self._next_action_id, option_action))
+                    result.append(menu_option + (self._next_action_id,))
+                elif non_string_iterable(option_action):
+                    result.append((option_text,
+                                option_icon,
+                                self._add_ids_to_menu_options(option_action),
+                                self._next_action_id))
+                else:
+                    raise Exception('Unknown item', option_text, option_icon, option_action)
             else:
                 result.append(menu_option)
             self._next_action_id += 1
@@ -255,6 +256,9 @@ class SysTrayIcon(object):
                                             hbmpItem=option_icon,
                                             hSubMenu=submenu)
                     InsertMenuItem(menu, 0, 1,  ctypes.byref(item))
+            elif option == SysTrayIcon.SEPARATOR:
+                item = PackSeparator()
+                InsertMenuItem(menu, 0, 1,  ctypes.byref(item))
 
     def _prep_menu_icon(self, icon):
         icon = encode_for_locale(icon)

@@ -68,6 +68,7 @@ IDI_APPLICATION = 32512
 TPM_LEFTALIGN = 0
 SM_CXSMICON = 49
 SM_CYSMICON = 50
+MFT_SEPARATOR = 0x00000800
 COLOR_MENU = 4
 DI_NORMAL = 3
 
@@ -162,6 +163,12 @@ def PackMENUITEMINFO(text=None, hbmpItem=None, wID=None, hSubMenu=None):
     if hSubMenu is not None:
         res.fMask |= MIIM_SUBMENU
         res.hSubMenu = hSubMenu
+    return res
+
+def PackSeparator():
+    res = MENUITEMINFO()
+    res.cbSize = ctypes.sizeof(res)
+    res.fType = MFT_SEPARATOR
     return res
 
 def LOWORD(w):
